@@ -3,6 +3,8 @@
 import React, { useRef, useState, useEffect } from "react";
 
 const DrawingCanvas = () => {
+  const isMobile = window.innerWidth < 600;
+
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [isDrawing, setIsDrawing] = useState(false);
   const [color, setColor] = useState("#000000");
@@ -111,16 +113,27 @@ const DrawingCanvas = () => {
           </button>
         </div>
       </div>
-      <canvas
-        ref={canvasRef}
-        width={800}
-        height={600}
-        onMouseDown={startDrawing}
-        onMouseUp={stopDrawing}
-        onMouseOut={stopDrawing}
-        onMouseMove={draw}
-        className="border border-gray-300 bg-white"
-      />
+      {!isMobile ? (
+        <canvas
+          ref={canvasRef}
+          width={800}
+          height={600}
+          onMouseDown={startDrawing}
+          onMouseUp={stopDrawing}
+          onMouseOut={stopDrawing}
+          onMouseMove={draw}
+          className="border border-gray-300 bg-white"
+        />
+      ) : (
+        <canvas
+          ref={canvasRef}
+          onMouseDown={startDrawing}
+          onMouseUp={stopDrawing}
+          onMouseOut={stopDrawing}
+          onMouseMove={draw}
+          className="h-full w-full border border-gray-300 bg-white"
+        />
+      )}
     </div>
   );
 };
