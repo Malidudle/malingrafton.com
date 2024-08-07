@@ -73,7 +73,7 @@ const DrawingCanvas = () => {
 
   return (
     <div className="flex flex-col items-center">
-      <div className="mt-4 flex w-full max-w-[800px] items-center justify-between py-4">
+      <div className="mt-4 flex w-full max-w-[800px] flex-col items-center justify-between py-4 md:flex-row">
         <div className="flex items-center space-x-2">
           <span className="text-gray-200">Colour:</span>
           <input
