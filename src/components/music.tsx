@@ -125,7 +125,7 @@ const Music = () => {
       <div className="p-4">
         <div className="flex gap-4">
           <Image
-            src="/basquiat.jpg"
+            src="/Basquiat.jpg"
             alt="Playboi Carti"
             className="z-40 h-48 w-48 rounded-md object-cover"
             width={500}
