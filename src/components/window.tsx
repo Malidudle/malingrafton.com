@@ -28,13 +28,15 @@ const calculateWindowSize = (): { width: number; height: number } => {
 };
 
 const Window = ({ id, bringToFront, children }: WindowProps) => {
+  const isMobile = window.innerWidth < 600;
+
   const { openWindows, setOpenWindows } = useWindowContext();
   const [size, setSize] = useState(calculateWindowSize());
   const [position, setPosition] = useState({
     x: 40 + openWindows.length * 20,
     y: 40 + openWindows.length * 20,
   });
-  const [isMaximized, setIsMaximized] = useState(false);
+  const [isMaximized, setIsMaximized] = useState(isMobile);
 
   useEffect(() => {
     const handleResize = () => {
@@ -87,8 +89,8 @@ const Window = ({ id, bringToFront, children }: WindowProps) => {
       onDragStart={!isMaximized ? bringToFrontHandler : undefined}
       onClick={!isMaximized ? bringToFrontHandler : undefined}
       onResizeStart={!isMaximized ? bringToFrontHandler : undefined}
-      minWidth={600}
-      minHeight={400}
+      minWidth={isMobile ? 0 : 600}
+      minHeight={isMobile ? 0 : 400}
       bounds="window"
       disableDragging={isMaximized}
       dragHandleClassName="h-10"
@@ -110,28 +112,32 @@ const Window = ({ id, bringToFront, children }: WindowProps) => {
             className="bg-red-600"
             icon={<X strokeWidth={3} className="text-gray-800/50" />}
           />
-          <ControlButton
-            onClick={handleClose}
-            className="bg-yellow-400"
-            icon={<Minus strokeWidth={3} className="text-gray-800/50" />}
-          />
-          <ControlButton
-            onClick={handleMaximizeToggle}
-            className="bg-green-600"
-            icon={
-              isMaximized ? (
-                <ChevronsDownUp
-                  strokeWidth={3}
-                  className="-rotate-45 text-gray-800/50"
-                />
-              ) : (
-                <ChevronsUpDown
-                  strokeWidth={3}
-                  className="-rotate-45 text-gray-800/50"
-                />
-              )
-            }
-          />
+          {!isMobile && (
+            <>
+              <ControlButton
+                onClick={handleClose}
+                className="bg-yellow-400"
+                icon={<Minus strokeWidth={3} className="text-gray-800/50" />}
+              />
+              <ControlButton
+                onClick={handleMaximizeToggle}
+                className="bg-green-600"
+                icon={
+                  isMaximized ? (
+                    <ChevronsDownUp
+                      strokeWidth={3}
+                      className="-rotate-45 text-gray-800/50"
+                    />
+                  ) : (
+                    <ChevronsUpDown
+                      strokeWidth={3}
+                      className="-rotate-45 text-gray-800/50"
+                    />
+                  )
+                }
+              />
+            </>
+          )}
         </div>
         <div className="h-full overflow-scroll">{children}</div>
       </div>

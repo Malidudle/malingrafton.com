@@ -10,6 +10,8 @@ type CellState = {
 };
 
 const Minesweeper = () => {
+  const isMobile = window.innerWidth < 600;
+
   const [gridSize, setGridSize] = useState(10);
   const [mineCount, setMineCount] = useState(15);
   const [grid, setGrid] = useState<CellState[][]>([]);
@@ -179,6 +181,8 @@ const Minesweeper = () => {
     }
     return true;
   };
+
+  if (isMobile) return <div className="text-center">Mobile not supported</div>;
 
   return (
     <div className="flex flex-col items-center p-4">

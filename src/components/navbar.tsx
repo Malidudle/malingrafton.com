@@ -103,7 +103,7 @@ const Navbar = () => {
           </MenubarMenu>
         </Menubar>
       </div>
-      <div className="flex items-center gap-4">
+      <div className="hidden items-center gap-4 sm:flex">
         <div className="flex items-center gap-4">
           <BatteryMedium className="h-6 w-6 stroke-[1.5px]" />
           <Search className="h-4 w-4 stroke-2" />

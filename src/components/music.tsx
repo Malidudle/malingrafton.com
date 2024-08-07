@@ -123,7 +123,7 @@ const Music = () => {
 
       {/* Song List */}
       <div className="p-4">
-        <div className="flex gap-4">
+        <div className="flex flex-col gap-4 sm:flex-row">
           <Image
             src="/Basquiat.jpg"
             alt="Icon"
@@ -135,7 +135,9 @@ const Music = () => {
           <div className="flex flex-col justify-between">
             <div>
               <p className="text-sm opacity-50">Playlist</p>
-              <h2 className="mt-4 text-7xl font-black">Random Playlist</h2>
+              <h2 className="mt-4 text-4xl font-black sm:text-7xl">
+                Random Playlist
+              </h2>
             </div>
             <p className="mt-auto flex items-center gap-2">
               <Avatar>
@@ -185,8 +187,8 @@ const Music = () => {
       </div>
 
       {/* Music Player */}
-      <div className="fixed bottom-0 grid w-[99%] grid-cols-3 gap-4 rounded-b-xl bg-black p-4">
-        <div className="flex items-center gap-4">
+      <div className="fixed bottom-0 grid w-[99%] grid-rows-2 gap-4 rounded-b-xl bg-black p-4 sm:grid-cols-3">
+        <div className="hidden items-center gap-4 sm:flex">
           <Image
             src={currentSong.cover}
             className="z-40 h-20 w-20 rounded-md object-cover"

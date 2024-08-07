@@ -30,8 +30,8 @@ export const DESKTOP_FILES = [
   {
     id: 7,
     name: "Minesweeper",
-    x: 3,
-    y: 1,
+    x: 1,
+    y: 2,
     icon: "💣",
     component: <Minesweeper />,
   },
