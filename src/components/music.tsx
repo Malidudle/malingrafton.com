@@ -4,51 +4,23 @@ import { Progress } from "@/components/ui/progress";
 import Image from "next/image";
 import { Slider } from "@/components/ui/slider";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-
-interface Song {
-  title: string;
-  artist: string;
-  src: string;
-  cover: string;
-}
-
-const songs: Song[] = [
-  {
-    title: "Long Time - Intro",
-    artist: "Playboi Carti",
-    src: "/music/long-time.mp3",
-    cover: "/music/carti.jpg",
-  },
-  {
-    title: "I Love Kanye",
-    artist: "Kanye West",
-    src: "/music/i-love-kanye.mp3",
-    cover: "/music/life-of-pablo.jpg",
-  },
-  {
-    title: "P.Y.T (Pretty Young Thing)",
-    artist: "Michael Jackson",
-    src: "/music/pyt.mp3",
-    cover: "/music/thriller.png",
-  },
-];
+import { Song, SONGS } from "@/data/songs";
 
 const Music = () => {
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const [progress, setProgress] = useState<number>(0);
   const [volume, setVolume] = useState<number>(50);
-  const [currentSong, setCurrentSong] = useState<Song>(songs[0]);
+  const [currentSong, setCurrentSong] = useState<Song>(SONGS[0]);
   const [hoveredSongIndex, setHoveredSongIndex] = useState<number | null>(null);
   const [durations, setDurations] = useState<number[]>(
-    Array(songs.length).fill(0),
+    Array(SONGS.length).fill(0),
   );
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
-    // Load durations for all songs
     const loadSongDurations = async () => {
       const newDurations = await Promise.all(
-        songs.map(
+        SONGS.map(
           (song) =>
             new Promise<number>((resolve) => {
               const audio = new Audio(song.src);
@@ -175,7 +147,7 @@ const Music = () => {
           </div>
         </div>
         <ul className="mt-12 space-y-4 overflow-scroll">
-          {songs.map((song, index) => (
+          {SONGS.map((song, index) => (
             <li
               key={index}
               className="flex cursor-pointer items-center justify-between rounded-md bg-white/20 p-4 hover:underline"

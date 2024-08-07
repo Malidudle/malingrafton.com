@@ -16,6 +16,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "./ui/textarea";
 import { useToast } from "./ui/use-toast";
+import { useState } from "react";
 
 const formSchema = z.object({
   email: z.string().email(),
@@ -28,6 +29,7 @@ const formSchema = z.object({
 });
 
 export default function ContactMe() {
+  const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -39,13 +41,37 @@ export default function ContactMe() {
     },
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
-    toast({
-      title: "Message sent!",
-      description: "I'll get back to you soon.",
-    });
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    const { email, subject, message } = values;
+    setIsLoading(true);
+
+    await fetch("/api/send-email", {
+      method: "POST",
+      body: JSON.stringify({ email, subject, message }),
+    })
+      .then((response) => {
+        if (response.ok) {
+          toast({
+            title: "Message sent!",
+            description: "I'll get back to you soon.",
+          });
+          form.reset();
+        } else {
+          toast({
+            title: "Error sending message",
+            description: "Please try again later.",
+          });
+        }
+      })
+      .catch((error) => {
+        console.error("Error sending message:", error);
+        toast({
+          title: "Error sending message",
+          description: "Please try again later.",
+        });
+      });
+
+    setIsLoading(false);
     form.reset();
   }
 
@@ -111,8 +137,13 @@ export default function ContactMe() {
                 </FormItem>
               )}
             />
-            <Button type="submit" className="mb-5 text-black" variant="outline">
-              Submit
+            <Button
+              type="submit"
+              className="mb-5 text-black"
+              variant="outline"
+              disabled={isLoading}
+            >
+              {isLoading ? "Sending..." : "Submit"}
             </Button>
           </div>
         </form>

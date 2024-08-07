@@ -18,11 +18,16 @@ const ClientLoader: React.FC<{ children: React.ReactNode }> = ({
         "/music/carti.jpg",
         "/music/life-of-pablo.jpg",
         "/music/thriller.png",
+        "/me.JPG",
+        "/music/ye.jpg",
+        "/music/berlioz.jpg",
       ];
       const audioSrcs = [
         "/music/i-love-kanye.mp3",
         "/music/pyt.mp3",
         "/music/long-time.mp3",
+        "/music/violent-crimes.mp3",
+        "/music/nyc-in-1940.mp3",
       ];
 
       const totalAssets = imageSrcs.length + audioSrcs.length;

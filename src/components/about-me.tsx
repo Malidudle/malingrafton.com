@@ -17,7 +17,7 @@ export default function AboutMe() {
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
             <div className="flex flex-col items-start gap-4">
               <Image
-                src="/basquiat.jpg"
+                src="/me.JPG"
                 alt="Profile Picture"
                 width={230}
                 height={230}
