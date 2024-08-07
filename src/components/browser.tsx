@@ -3,7 +3,9 @@
 import { useState } from "react";
 
 const Browser = () => {
-  const [search, setSearch] = useState("https://en.wikipedia.org/wiki/Goat");
+  const [search, setSearch] = useState(
+    "https://en.wikipedia.org/wiki/templeOS",
+  );
   return (
     <div className="h-full w-full bg-slate-900">
       <input

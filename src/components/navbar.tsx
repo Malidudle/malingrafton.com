@@ -60,50 +60,22 @@ const Navbar = () => {
         />
         <Menubar>
           <MenubarMenu>
-            <MenubarTrigger>File</MenubarTrigger>
+            <MenubarTrigger>Help</MenubarTrigger>
             <MenubarContent>
-              <MenubarItem>
-                New Tab <MenubarShortcut>⌘T</MenubarShortcut>
-              </MenubarItem>
-              <MenubarItem>
-                New Window <MenubarShortcut>⌘N</MenubarShortcut>
-              </MenubarItem>
-              <MenubarItem disabled>New Incognito Window</MenubarItem>
-              <MenubarSeparator />
-              <MenubarItem>
-                Print... <MenubarShortcut>⌘P</MenubarShortcut>
-              </MenubarItem>
+              <MenubarItem inset>Just click an icon</MenubarItem>
+              <MenubarItem inset>U can drag them too</MenubarItem>
             </MenubarContent>
           </MenubarMenu>
           <MenubarMenu>
-            <MenubarTrigger>Edit</MenubarTrigger>
+            <MenubarTrigger>Contacts</MenubarTrigger>
             <MenubarContent>
-              <MenubarItem>
-                Undo <MenubarShortcut>⌘Z</MenubarShortcut>
+              <MenubarItem inset asChild>
+                <Link href="mailto:malin@malingrafton.com">Email</Link>
               </MenubarItem>
-              <MenubarItem>
-                Redo <MenubarShortcut>⇧⌘Z</MenubarShortcut>
-              </MenubarItem>
-
               <MenubarSeparator />
-              <MenubarItem>Cut</MenubarItem>
-              <MenubarItem>Copy</MenubarItem>
-              <MenubarItem>Paste</MenubarItem>
-            </MenubarContent>
-          </MenubarMenu>
-          <MenubarMenu>
-            <MenubarTrigger>View</MenubarTrigger>
-            <MenubarContent>
-              <MenubarItem inset>
-                Reload <MenubarShortcut>⌘R</MenubarShortcut>
-              </MenubarItem>
               <MenubarItem disabled inset>
-                Force Reload <MenubarShortcut>⇧⌘R</MenubarShortcut>
+                My agency <MenubarShortcut>Soon!</MenubarShortcut>
               </MenubarItem>
-              <MenubarSeparator />
-              <MenubarItem inset>Toggle Fullscreen</MenubarItem>
-              <MenubarSeparator />
-              <MenubarItem inset>Hide Sidebar</MenubarItem>
             </MenubarContent>
           </MenubarMenu>
           <MenubarMenu>

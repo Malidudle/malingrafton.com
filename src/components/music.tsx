@@ -158,6 +158,7 @@ const Music = () => {
             className="z-40 h-48 w-48 rounded-md object-cover"
             width={500}
             height={500}
+            loading="eager"
           />
           <div className="flex flex-col justify-between">
             <div>
@@ -196,6 +197,7 @@ const Music = () => {
                   className="h-10 w-10 rounded-md"
                   width={50}
                   height={50}
+                  loading="eager"
                 />
                 <div className="ml-2">
                   <p className="text-sm">{song.title}</p>
@@ -219,6 +221,7 @@ const Music = () => {
             alt=""
             width={500}
             height={500}
+            loading="eager"
           />
           <div>
             <p className="text-sm">{currentSong.title}</p>

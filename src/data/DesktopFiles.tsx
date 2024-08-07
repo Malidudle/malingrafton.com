@@ -1,6 +1,9 @@
+import AboutMe from "@/components/about-me";
 import Browser from "@/components/browser";
+import Clients from "@/components/clients";
 import ContactMe from "@/components/contact-me";
 import Music from "@/components/music";
+import Paint from "@/components/paint";
 
 export const DESKTOP_FILES = [
   {
@@ -11,7 +14,7 @@ export const DESKTOP_FILES = [
     icon: "☎️",
     component: <ContactMe />,
   },
-  { id: 2, name: "Photos", x: 1, y: 0, icon: "🖼️", component: <div /> },
+  { id: 2, name: "Clients", x: 1, y: 0, icon: "👨‍💻", component: <Clients /> },
   { id: 3, name: "Music", x: 2, y: 0, icon: "🎵", component: <Music /> },
   {
     id: 4,
@@ -21,4 +24,6 @@ export const DESKTOP_FILES = [
     icon: "🌐",
     component: <Browser />,
   },
+  { id: 5, name: "About Me", x: 1, y: 1, icon: "👤", component: <AboutMe /> },
+  { id: 6, name: "Paint", x: 2, y: 1, icon: "🖌️", component: <Paint /> },
 ];
