@@ -19,7 +19,7 @@ const config = {
     },
     extend: {
       height: {
-        page: "calc(100vh - 28px)",
+        page: "calc(100dvh - 28px)",
       },
       colors: {
         border: "hsl(var(--border))",
