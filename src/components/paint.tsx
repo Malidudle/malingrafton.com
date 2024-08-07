@@ -3,8 +3,6 @@
 import React, { useRef, useState, useEffect } from "react";
 
 const DrawingCanvas = () => {
-  const isMobile = window.innerWidth < 600;
-
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [isDrawing, setIsDrawing] = useState(false);
   const [color, setColor] = useState("#000000");
@@ -18,10 +16,26 @@ const DrawingCanvas = () => {
         ctx.lineCap = "round";
         ctx.lineJoin = "round";
       }
+
+      // Set canvas size
+      const updateCanvasSize = () => {
+        const isMobile = window.innerWidth < 600;
+        canvas.width = isMobile ? window.innerWidth : 800;
+        canvas.height = isMobile ? window.innerHeight - 200 : 600; // Adjust height as needed
+      };
+
+      updateCanvasSize();
+      window.addEventListener("resize", updateCanvasSize);
+
+      return () => window.removeEventListener("resize", updateCanvasSize);
     }
   }, []);
 
-  const startDrawing = (e: React.MouseEvent<HTMLCanvasElement>) => {
+  const startDrawing = (
+    e:
+      | React.MouseEvent<HTMLCanvasElement>
+      | React.TouchEvent<HTMLCanvasElement>,
+  ) => {
     setIsDrawing(true);
     draw(e);
   };
@@ -35,15 +49,26 @@ const DrawingCanvas = () => {
     }
   };
 
-  const draw = (e: React.MouseEvent<HTMLCanvasElement>) => {
+  const draw = (
+    e:
+      | React.MouseEvent<HTMLCanvasElement>
+      | React.TouchEvent<HTMLCanvasElement>,
+  ) => {
     if (!isDrawing) return;
 
     const canvas = canvasRef.current;
     const ctx = canvas?.getContext("2d");
     if (ctx && canvas) {
       const rect = canvas.getBoundingClientRect();
-      const x = e.clientX - rect.left;
-      const y = e.clientY - rect.top;
+      let x, y;
+
+      if ("touches" in e) {
+        x = e.touches[0].clientX - rect.left;
+        y = e.touches[0].clientY - rect.top;
+      } else {
+        x = e.clientX - rect.left;
+        y = e.clientY - rect.top;
+      }
 
       ctx.strokeStyle = color;
       ctx.lineWidth = brushSize;
@@ -71,6 +96,21 @@ const DrawingCanvas = () => {
       link.download = "drawing.png";
       link.click();
     }
+  };
+
+  const handleTouchStart = (e: React.TouchEvent<HTMLCanvasElement>) => {
+    e.preventDefault();
+    startDrawing(e);
+  };
+
+  const handleTouchMove = (e: React.TouchEvent<HTMLCanvasElement>) => {
+    e.preventDefault();
+    draw(e);
+  };
+
+  const handleTouchEnd = (e: React.TouchEvent<HTMLCanvasElement>) => {
+    e.preventDefault();
+    stopDrawing();
   };
 
   return (
@@ -113,27 +153,17 @@ const DrawingCanvas = () => {
           </button>
         </div>
       </div>
-      {!isMobile ? (
-        <canvas
-          ref={canvasRef}
-          width={800}
-          height={600}
-          onMouseDown={startDrawing}
-          onMouseUp={stopDrawing}
-          onMouseOut={stopDrawing}
-          onMouseMove={draw}
-          className="border border-gray-300 bg-white"
-        />
-      ) : (
-        <canvas
-          ref={canvasRef}
-          onMouseDown={startDrawing}
-          onMouseUp={stopDrawing}
-          onMouseOut={stopDrawing}
-          onMouseMove={draw}
-          className="h-full w-full border border-gray-300 bg-white"
-        />
-      )}
+      <canvas
+        ref={canvasRef}
+        onMouseDown={startDrawing}
+        onMouseUp={stopDrawing}
+        onMouseOut={stopDrawing}
+        onMouseMove={draw}
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
+        className="touch-none border border-gray-300 bg-white"
+      />
     </div>
   );
 };
