@@ -1,113 +1,175 @@
+"use client";
+
+import { useState, useRef, DragEvent, useEffect } from "react";
 import Image from "next/image";
+import { WindowProvider, useWindowContext } from "@/app/window-context";
+import Window from "@/components/window";
+import { DESKTOP_FILES } from "@/data/DesktopFiles";
+import { useToast } from "@/components/ui/use-toast";
+
+interface FileItem {
+  id: number;
+  name: string;
+  x: number;
+  y: number;
+  icon: string | React.ReactNode;
+  component: React.ReactNode;
+}
+
+const HomeContent = () => {
+  const { toast } = useToast();
+  const [files, setFiles] = useState<FileItem[]>(DESKTOP_FILES);
+
+  const { openWindows, setOpenWindows, bringToFront } = useWindowContext();
+  const [draggedItem, setDraggedItem] = useState<number | null>(null);
+  const desktopRef = useRef<HTMLDivElement>(null);
+
+  const GRID_SIZE = 120;
+  const GRID_COLS = Math.floor(window.innerWidth / GRID_SIZE);
+  const GRID_ROWS = Math.floor(window.innerHeight / GRID_SIZE);
+
+  useEffect(() => {
+    toast({
+      title: "Welcome to my website!",
+      description:
+        "I'm Malin Grafton. This is my personal website. Click on the icons to see what I'm up to.",
+    });
+  }, []);
+
+  const handleDragStart = (e: DragEvent<HTMLDivElement>, id: number) => {
+    setDraggedItem(id);
+    e.dataTransfer.effectAllowed = "move";
+  };
+
+  const handleDragOver = (e: DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = "move";
+  };
+
+  const isPositionOccupied = (
+    x: number,
+    y: number,
+    excludeId: number,
+  ): boolean => {
+    return files.some(
+      (file) => file.x === x && file.y === y && file.id !== excludeId,
+    );
+  };
+
+  const findNearestEmptyPosition = (
+    startX: number,
+    startY: number,
+    excludeId: number,
+  ): [number, number] => {
+    let radius = 0;
+    while (radius < Math.max(GRID_COLS, GRID_ROWS)) {
+      for (let dx = -radius; dx <= radius; dx++) {
+        for (let dy = -radius; dy <= radius; dy++) {
+          if (Math.abs(dx) === radius || Math.abs(dy) === radius) {
+            const newX = startX + dx;
+            const newY = startY + dy;
+            if (
+              newX >= 0 &&
+              newX < GRID_COLS &&
+              newY >= 0 &&
+              newY < GRID_ROWS
+            ) {
+              if (!isPositionOccupied(newX, newY, excludeId)) {
+                return [newX, newY];
+              }
+            }
+          }
+        }
+      }
+      radius++;
+    }
+    return [startX, startY];
+  };
+
+  const handleDrop = (e: DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    if (draggedItem === null || !desktopRef.current) return;
+
+    const desktopRect = desktopRef.current.getBoundingClientRect();
+    const rawX = e.clientX - desktopRect.left;
+    const rawY = e.clientY - desktopRect.top;
+
+    let x = Math.floor(rawX / GRID_SIZE);
+    let y = Math.floor(rawY / GRID_SIZE);
+
+    [x, y] = findNearestEmptyPosition(x, y, draggedItem);
+
+    setFiles((prevFiles) =>
+      prevFiles.map((file) =>
+        file.id === draggedItem ? { ...file, x, y } : file,
+      ),
+    );
+
+    setDraggedItem(null);
+  };
+
+  const handleFileClick = (id: number) => {
+    const zIndex = openWindows.length
+      ? Math.max(...openWindows.map((win: { zIndex: any }) => win.zIndex)) + 1
+      : 1000;
+    setOpenWindows([...openWindows, { id, zIndex }]);
+    bringToFront(id);
+  };
+
+  return (
+    <main className="relative h-page w-full">
+      <div
+        ref={desktopRef}
+        className="relative h-full w-full overflow-hidden"
+        onDragOver={handleDragOver}
+        onDrop={handleDrop}
+      >
+        <Image
+          draggable={false}
+          src="/background.jpg"
+          alt="background"
+          className="absolute inset-0 object-cover object-center"
+          loading="eager"
+          priority
+          fill
+        />
+        {files.map((file) => (
+          <div
+            key={file.id}
+            className="absolute z-10 flex cursor-pointer select-none flex-col items-center justify-center"
+            style={{
+              left: `${file.x * GRID_SIZE}px`,
+              top: `${file.y * GRID_SIZE}px`,
+              width: `${GRID_SIZE - 20}px`,
+              height: `${GRID_SIZE - 20}px`,
+            }}
+            draggable
+            onDragStart={(e) => handleDragStart(e, file.id)}
+            onClick={() => handleFileClick(file.id)}
+          >
+            <div className="mb-1 text-5xl">{file.icon}</div>
+            <div className="max-w-full overflow-hidden text-ellipsis whitespace-nowrap text-center text-xs text-white [text-shadow:0_0_3px_rgba(0,0,0,0.8)]">
+              {file.name}
+            </div>
+          </div>
+        ))}
+        {openWindows.map(({ id }: { id: number }) => {
+          const file = files.find((file) => file.id === id);
+          return file ? (
+            <Window key={id} id={id} bringToFront={bringToFront}>
+              {file.component}
+            </Window>
+          ) : null;
+        })}
+      </div>
+    </main>
+  );
+};
 
 export default function Home() {
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <div className="z-10 w-full max-w-5xl items-center justify-between font-mono text-sm lg:flex">
-        <p className="fixed left-0 top-0 flex w-full justify-center border-b border-gray-300 bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:static lg:w-auto  lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30">
-          Get started by editing&nbsp;
-          <code className="font-mono font-bold">src/app/page.tsx</code>
-        </p>
-        <div className="fixed bottom-0 left-0 flex h-48 w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:size-auto lg:bg-none">
-          <a
-            className="pointer-events-none flex place-items-center gap-2 p-8 lg:pointer-events-auto lg:p-0"
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{" "}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className="dark:invert"
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
-        </div>
-      </div>
-
-      <div className="relative z-[-1] flex place-items-center before:absolute before:h-[300px] before:w-full before:-translate-x-1/2 before:rounded-full before:bg-gradient-radial before:from-white before:to-transparent before:blur-2xl before:content-[''] after:absolute after:-z-20 after:h-[180px] after:w-full after:translate-x-1/3 after:bg-gradient-conic after:from-sky-200 after:via-blue-200 after:blur-2xl after:content-[''] before:dark:bg-gradient-to-br before:dark:from-transparent before:dark:to-blue-700 before:dark:opacity-10 after:dark:from-sky-900 after:dark:via-[#0141ff] after:dark:opacity-40 sm:before:w-[480px] sm:after:w-[240px] before:lg:h-[360px]">
-        <Image
-          className="relative dark:drop-shadow-[0_0_0.3rem_#ffffff70] dark:invert"
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
-
-      <div className="mb-32 grid text-center lg:mb-0 lg:w-full lg:max-w-5xl lg:grid-cols-4 lg:text-left">
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className="mb-3 text-2xl font-semibold">
-            Docs{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className="m-0 max-w-[30ch] text-sm opacity-50">
-            Find in-depth information about Next.js features and API.
-          </p>
-        </a>
-
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className="mb-3 text-2xl font-semibold">
-            Learn{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className="m-0 max-w-[30ch] text-sm opacity-50">
-            Learn about Next.js in an interactive course with&nbsp;quizzes!
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className="mb-3 text-2xl font-semibold">
-            Templates{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className="m-0 max-w-[30ch] text-sm opacity-50">
-            Explore starter templates for Next.js.
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className="mb-3 text-2xl font-semibold">
-            Deploy{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className="m-0 max-w-[30ch] text-balance text-sm opacity-50">
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
-    </main>
+    <WindowProvider>
+      <HomeContent />
+    </WindowProvider>
   );
 }
