@@ -25,6 +25,7 @@ export default function RootLayout({
           name="google-site-verification"
           content="fJgxWCbHyeIbia5gxNEou-TPT5z6HpFLS2NmtNLHHVA"
         />
+        <link rel="preload" href="/background.jpg" as="image"></link>
       </head>
       <body className={inter.className}>
         <ClientLoader>
