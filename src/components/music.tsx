@@ -187,7 +187,7 @@ const Music = () => {
       </div>
 
       {/* Music Player */}
-      <div className="fixed bottom-0 grid w-[99%] grid-rows-2 gap-4 rounded-b-xl bg-black p-4 sm:grid-cols-3">
+      <div className="fixed bottom-0 grid w-[99%] grid-rows-2 gap-4 rounded-b-xl bg-black p-4 sm:grid-cols-3 sm:grid-rows-none">
         <div className="hidden items-center gap-4 sm:flex">
           <Image
             src={currentSong.cover}
