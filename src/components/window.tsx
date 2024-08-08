@@ -24,7 +24,10 @@ const calculateWindowSize = (): { width: number; height: number } => {
   if (innerWidth < 1100) {
     return { width: innerWidth * 0.8, height: innerHeight * 0.8 };
   }
-  return { width: 950, height: 750 };
+  return {
+    width: 950,
+    height: innerHeight * 0.8 < 750 ? innerHeight * 0.8 : 750,
+  };
 };
 
 const Window = ({ id, bringToFront, children }: WindowProps) => {
