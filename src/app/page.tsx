@@ -130,8 +130,10 @@ const HomeContent = () => {
           alt="background"
           className="absolute inset-0 object-cover object-center"
           loading="eager"
-          priority
-          fill
+          priority={true}
+          fill={true}
+          placeholder="blur"
+          blurDataURL="/small-blurred-background.jpg"
         />
         {files.map((file) => (
           <div
